@@ -1,26 +1,55 @@
+/* src/app/globals.css */
+
+/* 1. Include Tailwind's base styles, component classes, and utility classes */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+/* 2. Define your custom theme variables (Light/Dark mode) */
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Light mode (default) */
+    --background: 255 255 255; /* Use RGB values for opacity support if needed later */
+    --foreground: 23 23 23;   /* Neutral 900 */
+
+    /* Add other Shadcn/Tailwind CSS variables if needed, e.g., for borders, inputs, rings */
+    /* These often get added/modified by `npx shadcn-ui init` */
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    /* ... other variables ... */
+    --radius: 0.5rem;
+  }
+
+  .dark { /* Tailwind's default dark mode selector is class="dark" */
+    /* Dark mode variables */
+    --background: 10 10 10; /* Neutral 950 */
+    --foreground: 237 237 237; /* Neutral 200 */
+
+    /* Add corresponding dark mode variables for Shadcn/Tailwind */
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    /* ... other variables ... */
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 3. Apply base body styles using variables (Tailwind's base layer handles some resets) */
+@layer base {
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+    /* Font family can be handled by Tailwind config or kept here */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  }
+
+  /* Ensure necessary elements take full height for the canvas */
+  html,
+  body,
+  body > div:first-child,
+  div#__next { /* Target common Next.js wrappers */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    overflow: hidden; /* Prevent scrollbars interfering with canvas */
+  }
 }
