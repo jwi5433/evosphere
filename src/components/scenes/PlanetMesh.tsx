@@ -13,7 +13,7 @@ export const PlanetMesh: React.FC<PlanetMeshProps> = ({
   radius = 2,
   texturePath = "/textures/terrain/rocky_grass/rocky_diff.jpg"
 }) => {
-  // Load texture for the planet
+
   const diffuseMap = useLoader(TextureLoader, texturePath);
   
   return (

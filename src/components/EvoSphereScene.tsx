@@ -11,21 +11,21 @@ import { SceneLighting } from "./scenes/SceneLighting";
 
 function Scene() {
   const targetPosition = new Vector3(0, 0, 0);
-
+  
   const { controlProps, updateControls } = useTrackballControls(targetPosition);
-
+  
   useFrame(() => {
     updateControls();
   });
-
+  
   return (
     <>
       {/* Lighting */}
       <SceneLighting intensity={1.5} />
-
+      
       {/* Controls */}
       <TrackballControls {...controlProps} />
-
+      
       {/* Planet */}
       <PlanetMesh position={targetPosition} />
     </>
@@ -40,13 +40,13 @@ const EvoSphereScene = () => {
           position: [0, 0, 7],
           fov: 60,
         }}
-        gl={{
+        gl={{ 
           antialias: true,
           alpha: false,
-          powerPreference: "high-performance",
+          powerPreference: 'high-performance'
         }}
         onCreated={({ gl }) => {
-          gl.domElement.style.touchAction = "none";
+          gl.domElement.style.touchAction = 'none';
         }}
       >
         <Scene />
