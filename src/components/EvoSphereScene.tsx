@@ -8,26 +8,27 @@ import { Vector3 } from "three";
 import { useTrackballControls } from "./controls/useTrackballControls";
 import { PlanetMesh } from "./scenes/PlanetMesh";
 import { SceneLighting } from "./scenes/SceneLighting";
+import Skydome from "./scenes/Skydome";
 
 function Scene() {
   const targetPosition = new Vector3(0, 0, 0);
-  
+
   const { controlProps, updateControls } = useTrackballControls(targetPosition);
-  
+
   useFrame(() => {
     updateControls();
   });
-  
+
   return (
     <>
       {/* Lighting */}
       <SceneLighting intensity={1.5} />
-      
+
       {/* Controls */}
       <TrackballControls {...controlProps} />
-      
+
       {/* Planet */}
-      <PlanetMesh position={targetPosition} />
+      <PlanetMesh position={targetPosition} scale={0.5} />
     </>
   );
 }
@@ -37,18 +38,21 @@ const EvoSphereScene = () => {
     <div style={{ height: "100vh", width: "100%", background: "#18181b" }}>
       <Canvas
         camera={{
-          position: [0, 0, 7],
+          position: [0, 0, 5],
           fov: 60,
+          near: 0.1,
+          far: 1000,
         }}
-        gl={{ 
+        gl={{
           antialias: true,
           alpha: false,
-          powerPreference: 'high-performance'
+          powerPreference: "high-performance",
         }}
         onCreated={({ gl }) => {
-          gl.domElement.style.touchAction = 'none';
+          gl.domElement.style.touchAction = "none";
         }}
       >
+        <Skydome />
         <Scene />
       </Canvas>
     </div>
