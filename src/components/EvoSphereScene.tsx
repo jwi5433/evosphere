@@ -1,96 +1,58 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import React from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { TrackballControls } from "@react-three/drei";
-import { TextureLoader, Group } from "three";
+import { Vector3 } from "three";
 
-const AutoRotatingPlanet: React.FC<{
-  idle: boolean;
-  children: React.ReactNode;
-}> = ({ idle, children }) => {
-  const groupRef = useRef<Group>(null);
+import { useTrackballControls } from "./controls/useTrackballControls";
+import { PlanetMesh } from "./scenes/PlanetMesh";
+import { SceneLighting } from "./scenes/SceneLighting";
+
+function Scene() {
+  const targetPosition = new Vector3(0, 0, 0);
+
+  const { controlProps, updateControls } = useTrackballControls(targetPosition);
 
   useFrame(() => {
-    if (idle && groupRef.current) {
-      groupRef.current.rotation.y += 0.001;
-    }
+    updateControls();
   });
 
-  return <group ref={groupRef}>{children}</group>;
-};
-
-const EvoSphereScene: React.FC = () => {
-  const [idle, setIdle] = useState(false);
-  const idleTimer = useRef<NodeJS.Timeout | null>(null);
-
-  const resetIdleTimer = useCallback(() => {
-    if (idleTimer.current) clearTimeout(idleTimer.current);
-    setIdle(false);
-    idleTimer.current = setTimeout(() => setIdle(true), 10000);
-  }, []);
-  useEffect(() => {
-    resetIdleTimer();
-
-    const events = ["mousemove", "mousedown", "wheel", "touchstart"];
-    const reset = () => resetIdleTimer();
-
-    events.forEach((event) => window.addEventListener(event, reset));
-    return () => {
-      events.forEach((event) => window.removeEventListener(event, reset));
-      if (idleTimer.current) clearTimeout(idleTimer.current);
-    };
-  }, [resetIdleTimer]);
-
-  const diffuseMap = useLoader(
-    TextureLoader,
-    "/textures/terrain/rocky_grass/rocky_diff.jpg",
-  );
-  const normalMap = useLoader(
-    TextureLoader,
-    "/textures/terrain/rocky_grass/rocky_nor.png",
-  );
-  const roughnessMap = useLoader(
-    TextureLoader,
-    "/textures/terrain/rocky_grass/rocky_rough.png",
-  );
-  // @ts-ignore
-  // @ts-ignore
   return (
-    <div style={{ height: "100vh", width: "100%", background: "#27272a" }}>
+    <>
+      {/* Lighting */}
+      <SceneLighting intensity={1.5} />
+
+      {/* Controls */}
+      <TrackballControls {...controlProps} />
+
+      {/* Planet */}
+      <PlanetMesh position={targetPosition} />
+    </>
+  );
+}
+
+const EvoSphereScene = () => {
+  return (
+    <div style={{ height: "100vh", width: "100%", background: "#18181b" }}>
       <Canvas
         camera={{
           position: [0, 0, 7],
           fov: 60,
         }}
-        shadows
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: "high-performance",
+        }}
+        onCreated={({ gl }) => {
+          gl.domElement.style.touchAction = "none";
+        }}
       >
-        <ambientLight intensity={0.5} />
-        <directionalLight
-          position={[5, 5, 5]}
-          intensity={1.0}
-          castShadow={true}
-        />
-        <TrackballControls
-          rotateSpeed={1}
-          zoomSpeed={0.5}
-          panSpeed={0.3}
-          staticMoving={false}
-          dynamicDampingFactor={0.12}
-        />
-
-        <AutoRotatingPlanet idle={idle}>
-          <mesh position={[0, 0, 0]} receiveShadow={true}>
-            <sphereGeometry args={[2, 32, 32]} />
-            <meshStandardMaterial
-              map={diffuseMap}
-              normalMap={normalMap}
-              roughnessMap={roughnessMap}
-            />
-          </mesh>
-        </AutoRotatingPlanet>
+        <Scene />
       </Canvas>
     </div>
   );
 };
+
 export default EvoSphereScene;
