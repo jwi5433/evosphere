@@ -1,11 +1,11 @@
 // src/components/scenes/Skydome.tsx
 import React, { useEffect } from "react";
 import { useLoader } from "@react-three/fiber";
-import { RGBELoader } from "three-stdlib";
 import * as THREE from "three";
+import { TextureLoader } from "three";
 
 const Skydome = () => {
-  const spaceTexture = useLoader(RGBELoader, "/textures/skybox.hdr");
+  const spaceTexture = useLoader(TextureLoader, "/textures/skybox_large.jpg");
 
   useEffect(() => {
     if (spaceTexture) {
